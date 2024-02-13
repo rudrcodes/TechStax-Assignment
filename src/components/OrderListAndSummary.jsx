@@ -35,7 +35,7 @@ export const OrderListAndSummary = () => {
 
     const initPayment = (data) => {
         const options = {
-            key: "rzp_test_cmkZnIOVEjyaS0", 
+            key: "rzp_test_cmkZnIOVEjyaS0",
             amount: data.amount,
             currency: data.currency,
             description: "Test Order",
@@ -44,29 +44,45 @@ export const OrderListAndSummary = () => {
                 try {
                     const verifyUrl = "http://localhost:8080/api/payment/verify";
                     const { data } = await axios.post(verifyUrl, response)
-                    console.log(response)
+                    console.log("RESPONSE : ", response)
                 } catch (error) {
+                    alert("error")
                     console.log(error)
                 }
             }
         }
         const rzp1 = new window.Razorpay(options);
         rzp1.open();
+        rzp1.on('payment.failed', function (response) {
+            // alert(response.error.code);
+            alert(response.error.description);
+            // alert(response.error.source);
+            // alert(response.error.step);
+            // alert(response.error.reason);
+            // alert(response.error.metadata.order_id);
+            // alert(response.error.metadata.payment_id);
+            console.log("RZP payment failed")
+            console.log(response.error.description)
+        }
+        )
     }
 
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         try {
-            const res = await axios.post("http://localhost:8080/api/payment/orders", { amount: total });
+            const res = await axios.post("http://localhost:8080/api/payment/orders", { amount: 1058.65 });
             console.log(res.data)
             initPayment(res.data.data)
-            alert("Order placed")
+            // alert("Order placed")
 
         } catch (error) {
             console.log(error)
         }
     }
+
+
+
     return (
         <div className='OrderListAndSummaryCont'>
             <div className='heading'>
